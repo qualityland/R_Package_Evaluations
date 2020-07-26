@@ -1,6 +1,6 @@
 ---
-title: "The checkpoint Package"
-author: "Stefan Schmidt"
+title: "The _checkpoint_ Package"
+#author: "Stefan Schmidt"
 date: "7/24/2020"
 output: pdf_document
 ---
@@ -13,8 +13,41 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Purpose
 
+Main purpose of the _checkpoint_ package is __reproducibility in R__. This is
+achieved by setting up a __frozen repository__. To do this _checkpoint_
+modifies the R library path (pointing to a local directory) and changes the
+_repos_ option to point to the specified MRAN snapshot.
+
+The reproducibility issue is already solved on DaVinci, since MRAN snapshots
+already used. Nevertheless the DaVinci platform benefits from _checkpoint_
+usage.
+
 
 ## Expected Benefits
+
+### GxP related work and used packages stored in ClearCase
+
+If your work is GxP related and used packages have to be stored in ClearCase
+or another source code repository (together with the whole project directory),
+then it is relatively easy to do this with _checkpoint_ by simply defining
+the library folder to be stored in you project directory. This can be
+accomplished using the `checkpointLocation` parameter:
+
+```{r checkpointLocation, eval=FALSE}
+library(checkpoint)
+checkpoint('2020-06-26', checkpointLocation='~/project_dir/')
+```
+
+In this case it is also an advantage that the R library path is shrunk down
+to the location of your R installation and the checkpoint library folder only.
+All used packages are then stored in ClearCase (only exception: installation
+of base R and recommended packages). And even your R version can be fixed in
+your call to the `checkpoint()` function:
+
+```{r R.version, eval=FALSE}
+library(checkpoint)
+checkpoint('2020-06-26', R.version='4.0.2', checkpointLocation='~/project_dir/')
+```
 
 
 ## Possible Issues
