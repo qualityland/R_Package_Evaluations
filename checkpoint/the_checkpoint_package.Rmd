@@ -1,0 +1,78 @@
+---
+title: "The checkpoint Package"
+author: "Stefan Schmidt"
+date: "7/24/2020"
+output: pdf_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Purpose
+
+
+## Expected Benefits
+
+
+## Possible Issues
+
+
+## Packages are re-installed to your local checkpoint library
+
+This has PROs and CONNs.
+
+### PROs:
+
+* only __limited number of packages__ contained in your project. Especially
+when working GxP related and source code (including used packages) is anyways
+checked in to your ClearCase repository.
+
+### CONs:
+
+* local re-installation of packages has to be covered by some kind of
+__installation testing__ (even when the packages are available pre-installed
+on DaVinci)
+
+
+## FAQ
+
+### What snapshot dates are recommended?
+
+A suitable snapshot should meet the following criteria:
+
+* _availabiltiy_ - there is not for every day a snapshot available on MRAN.
+Valid snapshot dates can be retrieved via `getValidSnapshots()`.
+* _intended R version_ - to prevent incompatibilities a snapshot for the used
+R version should be chosen.
+* _latest bugfixes included_ - in case the R version is fixed (like on
+DaVinci), it is reasonable to choose a later snapshot to include a maximum of
+package bugfixes available for your R version. 
+
+
+## Open Questions
+
+### How can non-CRAN be installed reproducibly?
+
+_checkpoint_ internally uses `utils::install.packages()` for package
+installation. Can packages from other repositories (BioConductor, GitHub) also
+be installed in a reproducible way?
+
+## Download Statistics
+
+```{r downloads, echo=FALSE}
+library("ggplot2")
+library("dlstats")
+
+x <- cran_stats(c("checkpoint", "switchr", "renv"))
+
+if (!is.null(x)) {
+  head(x)
+  ggplot(x, aes(end, log(downloads), group = package, color = package)) +
+    geom_line() + geom_point(aes(shape = package))
+}
+```
+
+
