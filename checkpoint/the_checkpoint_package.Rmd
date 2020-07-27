@@ -26,15 +26,21 @@ package provides some functionality that might be very useful.
 
 ## Expected Benefits
 
-### All contributed R packages are in one place
+### All contributed R packages are stored in one place
 
-This is especially usefull when doing GxP related work with all used contributed 
-packages having to be stored in ClearCase.
+_checkpoint_ stores all contributed R packages in the _checkpoint_ library
+path. By default this is a subdirectory of the users home directory
+(~/.checkpoint/).
+
+But this behaviour can be modified and _checkpoint_ advised to choose a
+different local directory, which is especially usefull when doing GxP
+related work where all used contributed packages have to be stored in
+a special repository like ClearCase.
 
 Let us assume the following case:
 
 * a DaVinci users work is GxP related and
-* used packages have to be stored in a repository (like ClearCase)
+* all packages used by the project have to be stored in ClearCase
 
 In this situation the _checkpoint_ package comes in handy. By using the
 `checkpoint()` function it is relatively easy to not only define which MRAN
@@ -157,9 +163,9 @@ package bugfixes available for your R version.
 
 
 
-# What happens in the background
+## What happens in the background
 
-## Library Path
+### Library Path
 
 Using _checkpoint('2019-11-22')_ the output of `.libPaths()` changes from:
 
@@ -185,7 +191,7 @@ That means the number of available packages has also changed from 1'530 to only
 is now no longer available when running command `installed.packages()`.
 
 
-## Package Repositories
+### Package Repositories
 
 Running the _checkpoint_ function on DaVinci makes package repositories
 (command _options('repos')_) change from :
@@ -228,31 +234,26 @@ But package repositories will continue to link to the MRAN snapshot only.
 
 
 
-# Notes
 
-## checkpoint 1.0 ante portas
+## Open Questions
 
-In April 2020 Hong Ooi, the package maintainer, announced
-[checkpoint version 1.0 beta](https://blog.revolutionanalytics.com/2020/04/checkpoint-10-now-in-beta.html)
-to be available on GitHub.
+### How can non-CRAN packages be installed reproducibly?
 
+_checkpoint_ internally uses `utils::install.packages()` for package
+installation. Can packages from other repositories (BioConductor, GitHub) also
+be installed in a reproducible way?
 
-# Are a packages system requirements a problem?
+### Are a packages system requirements a problem?
 
 Probably yes, if a new manually installed packages expects some system
 libraries to be available that have not already been installed by one of the
 DaVinci pre-installed packages.
 
 
+## Notes
 
+### checkpoint 1.0 ante portas
 
-## Open Questions
-
-### How can non-CRAN be installed reproducibly?
-
-_checkpoint_ internally uses `utils::install.packages()` for package
-installation. Can packages from other repositories (BioConductor, GitHub) also
-be installed in a reproducible way?
-
-
-
+In April 2020 Hong Ooi, the package maintainer, announced
+[checkpoint version 1.0 beta](https://blog.revolutionanalytics.com/2020/04/checkpoint-10-now-in-beta.html)
+to be available on GitHub.
