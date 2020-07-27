@@ -16,58 +16,127 @@ knitr::opts_chunk$set(echo = TRUE)
 Main purpose of the _checkpoint_ package is __reproducibility in R__. This is
 achieved by setting up a __frozen repository__. To do this _checkpoint_
 modifies the R library path (pointing to a local directory) and changes the
-_repos_ option to point to the specified MRAN snapshot.
+_repos_ option to reference the specified MRAN snapshot.
 
 The reproducibility issue is already solved on DaVinci, since MRAN snapshots
-already used. Nevertheless the DaVinci platform benefits from _checkpoint_
-usage.
+are currently used there.
+Nevertheless DaVinci users can benefits from _checkpoint_ usage, because the
+package provides some functionality that might be very useful.
 
 
 ## Expected Benefits
 
-### GxP related work and used packages stored in ClearCase
+### All contributed R packages are in one place
 
-If your work is GxP related and used packages have to be stored in ClearCase
-or another source code repository (together with the whole project directory),
-then it is relatively easy to do this with _checkpoint_ by simply defining
-the library folder to be stored in you project directory. This can be
-accomplished using the `checkpointLocation` parameter:
+This is especially usefull when doing GxP related work with all used contributed 
+packages having to be stored in ClearCase.
+
+Let us assume the following case:
+
+* a DaVinci users work is GxP related and
+* used packages have to be stored in a repository (like ClearCase)
+
+In this situation the _checkpoint_ package comes in handy. By using the
+`checkpoint()` function it is relatively easy to not only define which MRAN
+snapshot to use, but also to configure your library folder to be stored in
+your project directory. This is achieved by setting the `checkpointLocation`
+parameter:
 
 ```{r checkpointLocation, eval=FALSE}
 library(checkpoint)
-checkpoint('2020-06-26', checkpointLocation='~/project_dir/')
+checkpoint('2019-11-22', checkpointLocation='~/project_dir/')
 ```
 
-In this case it is also an advantage that the R library path is shrunk down
-to the location of your R installation and the checkpoint library folder only.
-All used packages are then stored in ClearCase (only exception: installation
-of base R and recommended packages). And even your R version can be fixed in
-your call to the `checkpoint()` function:
+In this case it is also an advantage that the R library path
+is shrunk down to the location of your R installation and the _checkpoint_
+library folder only.
+All used packages (except base R and recommended packages) are then stored in
+your project directory and can be checked-in to ClearCase.
+
+
+### R version pre-defined in your script
+
+As a precaution even your R version can be determined when calling the
+`checkpoint()` function:
 
 ```{r R.version, eval=FALSE}
 library(checkpoint)
-checkpoint('2020-06-26', R.version='4.0.2', checkpointLocation='~/project_dir/')
+checkpoint('2019-11-22', R.version='3.6.1', checkpointLocation='~/project_dir/')
 ```
+
+This will result in an error message when you are not in your proper
+environment (for whatever reasons) or the environment has changed to a
+different R version.
 
 
 ## Possible Issues
 
+### Packages are re-installed to your local _checkpoint_ library
 
-## Packages are re-installed to your local checkpoint library
+DaVinci provides many contributed packages. Using _checkpoint_ even packages
+that are already installed on DaVinci will be re-installed to your _checkpoint_
+directory.
 
-This has PROs and CONNs.
+This has pros and cons.
 
-### PROs:
+#### PROs:
 
-* only __limited number of packages__ contained in your project. Especially
-when working GxP related and source code (including used packages) is anyways
-checked in to your ClearCase repository.
+* only a __limited number of packages__ namely the ones that are used in your
+project will be contained in your _checkpoint_ library.
+Especially GxP related work where all used source code (including used
+packages) has to be checked in to ClearCase is then easy to reproduce. The only
+component that is then not checked in to ClearCase is the R version used.
+And even this information can be easily recorded (using the _R.version_
+parameter).
 
-### CONs:
+#### CONs:
 
-* local re-installation of packages has to be covered by some kind of
+* local re-installation of packages probably has to be covered by some kind of
 __installation testing__ (even when the packages are available pre-installed
 on DaVinci)
+
+
+### Default location of _checkpoint_ library path
+
+The default location for the _checkpoint_ library path is the users home
+directory and there is no way for _checkpoint_ find a library path that
+differs from the default.
+
+
+
+## Background Information
+
+### CRAN, MRAN and checkpoint
+
+#### CRAN
+
+CRAN follows a rolling release concept. R packages are always provided in the
+latest version.
+
+This leads to issues:
+
+* custom-built R scripts can break in the future when used packages are updated
+* additional package installations can break dependencies of another already
+installed package
+* results are not reproducible since the environment in which they were
+obtained changes over time
+
+
+#### MRAN
+
+The Microsoft R Application Network (MRAN) solves part of these issues by the
+creation of [daily CRAN snapshots](https://cran.microsoft.com/snapshot/)
+that are provided back to the R community as a service.
+Every day since September 2014 at midnight UTC a snapshot of the CRAN main
+server in Austria is rsynced to MRAN.
+
+
+#### checkpoint
+
+The `checkpoint` package makes it possible to install package versions from one
+of the MRAN specific date in the past referencing the MRAN snapshots.
+
+
 
 
 ## FAQ
@@ -85,6 +154,98 @@ DaVinci), it is reasonable to choose a later snapshot to include a maximum of
 package bugfixes available for your R version. 
 
 
+
+
+
+# What happens in the background
+
+## Library Path
+
+Using _checkpoint('2019-11-22')_ the output of `.libPaths()` changes from:
+
+```
+R 3.6.1> .libPaths()
+[1] "/CHBS/apps/EB/software/R-bundle-Novartis/0.2-gomkl-2019a-R-3.6.1"    
+[2] "/CHBS/apps/EB/software/R-bundle-Bioconductor/3.9-gomkl-2019a-R-3.6.1"
+[3] "/CHBS/apps/EB/software/ncdf4/1.16.1-gomkl-2019a-R-3.6.1"             
+[4] "/CHBS/apps/EB/software/R/3.6.1-gomkl-2019a/lib64/R/library"
+```
+
+to:
+
+```
+R 3.6.1> .libPaths()
+[1] "/home/schmis1m/.checkpoint/2019-12-12/lib/x86_64-pc-linux-gnu/3.6.1"
+[2] "/home/schmis1m/.checkpoint/R-3.6.1"                                 
+[3] "/CHBS/apps/EB/software/R/3.6.1-gomkl-2019a/lib64/R/library"
+```
+
+That means the number of available packages has also changed from 1'530 to only
+705 (plus user installed packages). By the way, the _checkpoint_ package itself
+is now no longer available when running command `installed.packages()`.
+
+
+## Package Repositories
+
+Running the _checkpoint_ function on DaVinci makes package repositories
+(command _options('repos')_) change from :
+
+```
+R 3.6.1> options('repos')
+$repos
+                                                   CRAN 
+      "https://cran.microsoft.com/snapshot/2019-11-22/" 
+                                               BioCsoft 
+           "https://bioconductor.org/packages/3.9/bioc" 
+                                                BioCann 
+"https://bioconductor.org/packages/3.9/data/annotation" 
+                                                BioCexp 
+"https://bioconductor.org/packages/3.9/data/experiment" 
+```
+
+to:
+
+```
+R 3.6.1> options('repos')
+$repos
+[1] "https://mran.microsoft.com/snapshot/2019-12-12"
+```
+
+## Rollback with `unCheckpoint()`
+
+Executing `unCheckpoint()` will restore the library path back to:
+
+
+```
+R 3.6.1> .libPaths()
+[1] "/CHBS/apps/EB/software/R-bundle-Novartis/0.2-gomkl-2019a-R-3.6.1"    
+[2] "/CHBS/apps/EB/software/R-bundle-Bioconductor/3.9-gomkl-2019a-R-3.6.1"
+[3] "/CHBS/apps/EB/software/ncdf4/1.16.1-gomkl-2019a-R-3.6.1"             
+[4] "/CHBS/apps/EB/software/R/3.6.1-gomkl-2019a/lib64/R/library"
+```
+
+But package repositories will continue to link to the MRAN snapshot only.
+
+
+
+# Notes
+
+## checkpoint 1.0 ante portas
+
+In April 2020 Hong Ooi, the package maintainer, announced
+[checkpoint version 1.0 beta](https://blog.revolutionanalytics.com/2020/04/checkpoint-10-now-in-beta.html)
+to be available on GitHub.
+
+
+# Are a packages system requirements a problem?
+
+Probably yes, if a new manually installed packages expects some system
+libraries to be available that have not already been installed by one of the
+DaVinci pre-installed packages.
+
+
+
+
 ## Open Questions
 
 ### How can non-CRAN be installed reproducibly?
@@ -93,19 +254,5 @@ _checkpoint_ internally uses `utils::install.packages()` for package
 installation. Can packages from other repositories (BioConductor, GitHub) also
 be installed in a reproducible way?
 
-## Download Statistics
-
-```{r downloads, echo=FALSE}
-library("ggplot2")
-library("dlstats")
-
-x <- cran_stats(c("checkpoint", "switchr", "renv"))
-
-if (!is.null(x)) {
-  head(x)
-  ggplot(x, aes(end, log(downloads), group = package, color = package)) +
-    geom_line() + geom_point(aes(shape = package))
-}
-```
 
 
