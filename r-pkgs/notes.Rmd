@@ -1,0 +1,44 @@
+---
+title: "R Packages"
+#author: "Stefan Schmidt"
+#date: "7/29/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Notes taken while reading Haley Wickham's _R Packages_ book 2nd edition which
+can be read online [here](https://r-pkgs.org/).
+
+## Chapter 1 -- Introduction
+
+* get help on a package using `package?<pkg-name>` or
+`help(package="<pkg-name>")`
+* 10 developers at RStudio maintain 150 open source R packages
+* vignettes - long-form documents that show how to combine multiple parts of
+your package to solve real problems
+* `R/` directory is for your R code, while `src/` is for C and C++ code
+* 
+
+
+
+## R packages needed for Development
+
+* devtools - swiss army knife for package development
+* roxygen2 - documentation of your functions
+* rmarkdown - create e.g. vignettes
+* knitr - documentation weaving
+* testthat - unit test suite
+* desc - 
+* pkgbuild - 
+* pkgload - 
+* rcmdcheck - 
+* remotes - 
+* revdepcheck - 
+* sessioninfo - 
+* fs - file system work
+
+
+
