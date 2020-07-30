@@ -23,6 +23,22 @@ your package to solve real problems
 * 
 
 
+## Chapter 2 -- Overview
+
+### Development Process
+
+* `usethis::create_package("~/path/to/pkg-name")` - creates new package project
+from template.
+* `usethis::use_git()` - initializes git and offers initial commit.
+* `usethis::use_r("fct-name")` - create template for your first function.
+* `devtools::load_all()` - load the complete package.
+* test and commit your changes.
+* `devtools::check()` - runs 50 different checks (background: R CMD check).
+* `usethis::use_build_ignore()` - adds files to `.Rbuildignore` (files needed
+during development, but not part of deployment).
+* 
+
+
 
 ## R packages needed for Development
 
@@ -39,6 +55,7 @@ your package to solve real problems
 * revdepcheck - 
 * sessioninfo - 
 * fs - file system work
+* usethis - functions that simplify development (import of devtools).
 
 
 
