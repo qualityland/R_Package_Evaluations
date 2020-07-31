@@ -36,13 +36,19 @@ from template.
 * `devtools::check()` - runs 50 different checks (background: R CMD check).
 * `usethis::use_build_ignore()` - adds files to `.Rbuildignore` (files needed
 during development, but not part of deployment).
-* 
+* `usethis::use_mit_licence("user-name")` - creates MIT licence for user (same
+available for GPL, Apache).
+* `devtools::document()` - generates man pages for functions with edited
+roxygen2 skeleton.
+* `devtools::install()` - installs package (RStudio: Shift + Cmd + B).
+* `usethis::use_testthat()` - 
 
 
 
 ## R packages needed for Development
 
 * devtools - swiss army knife for package development
+* usethis - package development tools (dependency of devtools)
 * roxygen2 - documentation of your functions
 * rmarkdown - create e.g. vignettes
 * knitr - documentation weaving
@@ -55,7 +61,7 @@ during development, but not part of deployment).
 * revdepcheck - 
 * sessioninfo - 
 * fs - file system work
-* usethis - functions that simplify development (import of devtools).
+
 
 
 
