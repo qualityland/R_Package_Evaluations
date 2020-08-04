@@ -38,6 +38,8 @@ from template.
 during development, but not part of deployment).
 * `usethis::use_mit_licence("user-name")` - creates MIT licence for user (same
 available for GPL, Apache).
+* insert roxygen skeleton (Ctrl + Shift + Alt + R) - creates documentation
+skeleton.
 * `devtools::document()` - generates man pages for functions with edited
 roxygen2 skeleton.
 * `devtools::install()` - installs package (RStudio: Shift + Cmd + B).
